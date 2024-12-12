@@ -1,3 +1,9 @@
+# Final Code submission
+This repository serves as both a clone of the [Ou-Lian repository](https://github.com/PP-FM/Ou-Lian) as well as my proofs. The setup requires one to follow the steps below.
+My edited code is within myzkps/ and has all three proofs as well as python helper code for generation of dummy data as well as sanity checks for formulas. 
+- SN
+
+
 # How to build
 1. Install opam and ocaml 4.14.0
 ```shell
