@@ -1,0 +1,192 @@
+// #define M 2000
+// #define N 2000
+// #define P 2000
+// #define MN 4000000
+// #define NP 4000000
+// #define MP 4000000
+
+#define M 1000
+#define N 900
+#define P 80
+#define MN 900000
+#define NP 72000
+#define MP 80000
+
+#define samples 1
+
+/*
+C(MxP) = A(MxN) * B(NxP)
+
+u(Nx1) = B(NxP) * s(Px1)
+v(Mx1) = A(MxN) * u(Nx1)
+w(Mx1) = C(MxP) * s(Px1)
+check v == w
+*/
+
+// TODO: init in plocal
+/*
+atomic unit init_A(pvt int[MN] &A) {
+    for int i = 0; i < M; i = i + 1; {
+        for int j = 0; j < N; j = j + 1; {
+            A[i*N+j] = i+j;
+        }
+    }
+    return;
+}
+*/
+
+plocal1 plc int[MN] init_plc_A() {
+    plc int[MN] A = {0};
+    for int i = 0; i < M; i = i + 1; {
+        for int j = 0; j < N; j = j + 1; {
+            A[i*N+j] = i+j;
+        }
+    }
+    return A;
+}
+
+blackbox1 pvt int[MN] init_A() {
+    plc int[MN] plc_A = init_plc_A();
+    pvt int[MN] A = {0};
+    for int i = 0; i < MN; i = i + 1; {
+        A[i] = commit(plc_A[i]);
+    }
+    return A;
+}
+
+/*
+atomic unit init_B(pvt int[NP] &B) {
+    for int i = 0; i < N; i = i + 1; {
+        for int j = 0; j < P; j = j + 1; {
+            B[i*P+j] = i - j;
+        }
+    }
+    return;
+}
+*/
+
+plocal1 plc int[NP] init_plc_B() {
+    plc int[NP] B = {0};
+    for int i = 0; i < N; i = i + 1; {
+        for int j = 0; j < P; j = j + 1; {
+            B[i*P+j] = i - j;
+        }
+    }
+    return B;
+}
+
+blackbox1 pvt int[NP] init_B() {
+    plc int[NP] plc_B = init_plc_B();
+    pvt int[NP] B = {0};
+    for int i = 0; i < NP; i = i + 1; {
+        B[i] = commit(plc_B[i]);
+    }
+    return B;
+}
+/*
+atomic unit init_C(pvt int[MP] &C, pvt int[MN] &A, pvt int[NP] &B) {
+    for int i = 0; i < M; i = i + 1; {
+        for int j = 0; j < P; j = j + 1; {
+            plc int z = 0;
+            for int k = 0; k < N; k = k + 1; {
+                z = z + k1plc_int_of_pvt(A[i*N+k]) * k1plc_int_of_pvt(B[k*P+j]);
+            }
+            C[i*P+j] = commit(z);
+        }
+    }
+    return;
+}
+*/
+plocal1 plc int[MP] init_plc_C() {
+    plc int[MP] C = {0};
+    for int i = 0; i < M; i = i + 1; {
+        for int j = 0; j < P; j = j + 1; {
+            plc int z = 0;
+            for int k = 0; k < N; k = k + 1; {
+                z = z + (i+k) * (k-j);
+            }
+            C[i*P+j] = z;
+        }
+    }
+    return C;
+}
+
+blackbox1 pvt int[MP] init_C() {
+    plc int[MP] plc_C = init_plc_C();
+    pvt int[MP] C = {0};
+    for int i = 0; i < MP; i = i + 1; {
+        C[i] = commit(plc_C[i]);
+    }
+    return C;
+}
+
+atomic unit rand_vector(pub2 int[P] &v) {
+    for int i = 0; i < P; i = i + 1; {
+        v[i] = verifier_rand(0, 99);
+    }
+    return;
+}
+
+// u[Nx1] = B[NxP] * s[Px1]
+blackbox2 unit mul_B(pvt2 int[N] &u, pvt int[NP] &B, pub2 int[P] &s) {
+    for int i = 0; i < N; i = i + 1; {
+        pvt2 int z = 0;
+        for int j = 0; j < P; j = j + 1; {
+            z = z + B[i*P+j] * s[j];
+        }
+        u[i] = z;
+    }
+    return;
+}
+
+// v[Mx1] = A[MxN] * u[Nx1]
+blackbox2 unit mul_A(pvt2 int[M] &v, pvt int[MN] &A, pvt2 int[N] &u) {
+    for int i = 0; i < M; i = i + 1; {
+        pvt2 int z = 0;
+        for int j = 0; j < N; j = j + 1; {
+            z = z + A[i*N+j] * u[j];
+        }
+        v[i] = z;
+    }
+    return;
+}
+
+// w[Mx1] = C[MxP] * s[Px1]
+blackbox2 unit mul_C(pvt2 int[M] &w, pvt int[MP] &C, pub2 int[P] &s) {
+    for int i = 0; i < M; i = i + 1; {
+        pvt2 int z = 0;
+        for int j = 0; j < P; j = j + 1; {
+            z = z + C[i*P+j] * s[j];
+        }
+        w[i] = z;
+    }
+    return;
+}
+
+atomic unit check_vector_eq(pvt2 int[M] &v, pvt2 int[M] &w) {
+    for int i = 0; i < M; i = i + 1; {
+        assert (v[i] == w[i]);
+    }
+    return;
+}
+
+unit main() {
+    pvt int[MN] A = init_A();
+    pvt int[NP] B = init_B();
+    pvt int[MP] C = init_C();
+
+    for int times = 0; times < samples; times = times + 1; {
+        debug0(times);
+        pub2 int[P] s = {0};
+        rand_vector(s);
+
+        pvt2 int[N] u = {0};
+        pvt2 int[M] v = {0};
+        pvt2 int[M] w = {0};
+        mul_B(u, B, s);
+        mul_A(v, A, u);
+        mul_C(w, C, s);
+        check_vector_eq(v, w);
+    }
+    return;
+}

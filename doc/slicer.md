@@ -1,0 +1,2 @@
+When computing live-in and live-out, both plocal and private variables should be considered.
+But when computing the cut cost and conducting consistence checks, only private variables need to be considered.

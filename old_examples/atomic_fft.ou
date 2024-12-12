@@ -1,0 +1,193 @@
+/* Reference: https://github.com/scipr-lab/dizk */
+
+/* Math utilities */
+int lowestPowerOfTwo(int n) {
+    if (n < 1) {
+        return 1;
+    }
+    int result = 1;
+    while (result < n) {
+        result = result << 1;
+    }
+    return result;
+}
+
+int log2(int x) {
+    return k0pub_floor(k0pub_log(x) / k0pub_log(2));
+}
+
+int bitreverse(int n, int bits) {
+    int count = bits - 1;
+    int reverse = n;
+    n = n >> 1;
+    while (n > 0) {
+        reverse = (reverse << 1) | (n & 1);
+        n = n >> 1;
+        count = count - 1;
+    }
+    return (reverse << count) & ((1 << bits) - 1);
+}
+
+struct complex {
+    float re;
+    float im;
+}
+
+struct pvt_complex {
+    pvt float pvt_re;
+    pvt float pvt_im;
+}
+
+unit pvt_complex_mul(struct pvt_complex & x, struct pvt_complex & y, struct pvt_complex & result) {
+    pvt float re = x.pvt_re * y.pvt_re - x.pvt_im * y.pvt_im;
+    pvt float im = x.pvt_re * y.pvt_im + x.pvt_im * y.pvt_re;
+    result.pvt_re = re;
+    result.pvt_im = im;
+    return;
+}
+
+unit pvt_complex_sub(struct pvt_complex & x, struct pvt_complex & y, struct pvt_complex & result) {
+    pvt float re = x.pvt_re - y.pvt_re;
+    pvt float im = x.pvt_im - y.pvt_im;
+    result.pvt_re = re;
+    result.pvt_im = im;
+    return;
+}
+
+unit pvt_complex_add(struct pvt_complex & x, struct pvt_complex & y, struct pvt_complex & result) {
+    pvt float re = x.pvt_re + y.pvt_re;
+    pvt float im = x.pvt_im + y.pvt_im;
+    result.pvt_re = re;
+    result.pvt_im = im;
+    return;
+}
+
+unit complex_mul(struct complex & x, struct complex & y, struct complex & result) {
+    float re = x.re * y.re - x.im * y.im;
+    float im = x.re * y.im + x.im * y.re;
+    result.re = re;
+    result.im = im;
+    return;
+}
+
+unit complex_pow(struct complex & x, int exponent, struct complex & z) {
+    struct complex result = {.re = 1.0, .im = 0.0};
+    struct complex value = {.re = x.re, .im = x.im};
+    while (exponent > 0) {
+        if (exponent % 2 == 1) {
+            complex_mul(result, value, result);
+        }
+        complex_mul(value, value, value);
+        exponent = exponent / 2;
+    }
+    z.re = result.re;
+    z.im = result.im;
+    return;
+}
+
+unit rootOfUnity(int size, struct complex & result) {
+    float x = 2 * pi() / size;
+    result.re = k0pub_cos(x);
+    result.im = k0pub_sin(x);
+    return;
+}
+
+/* FFT utilities */
+unit pvt_float_swap(pvt float & x, pvt float & y) {
+    pvt float t = x;
+    x = y;
+    y = t;
+    return;
+}
+
+unit pvt_complex_swap(struct pvt_complex & x, struct pvt_complex & y) {
+    pvt_float_swap(x.pvt_re, y.pvt_re);
+    pvt_float_swap(x.pvt_im, y.pvt_im);
+    return;
+}
+
+atomic unit radix2fft_pass(int m, int k, struct pvt_complex & w, struct pvt_complex & w_m) {
+    int j = 0;
+    while (j < m) {
+        struct pvt_complex t = {.pvt_re = 0, .pvt_im = 0};
+        pvt_complex_mul(w, field[k+j+m], t);
+        pvt_complex_sub(field[k+j], t, field[k+j+m]);
+        pvt_complex_add(field[k+j], t, field[k+j]);
+        pvt_complex_mul(w, w_m, w);
+        j = j + 1;
+    }
+    return;
+}
+
+unit radix2fft(int n, struct pvt_complex[pub 8] & field, struct complex & omega) {
+    int logn = log2(n);
+    if (n==1) { return; }
+
+    assert n == (1 << logn);
+
+    /* swapping in place */
+    {
+        int k = 0;
+        while (k < n) {
+            int rk = bitreverse(k, logn);
+            if (k < rk) {
+                pvt_complex_swap(field[k], field[rk]);
+            }
+            k = k + 1;
+        }
+    }
+
+    int m = 1; /* invariant: m = 2^{s-1} */
+    {
+        int s = 1;
+        while (s <= logn) {
+            /* w_m is 2^s-th root of unity now */
+            struct complex pub_w_m = {.re = 0.0, .im = 0.0};
+            complex_pow(omega, n / (2 * m), pub_w_m);
+            struct pvt_complex w_m = {.pvt_re = pub_w_m.re, .pvt_im = pub_w_m.im};
+
+            int k = 0;
+            while (k < n) {
+                struct pvt_complex w = {.pvt_re = 1, .pvt_im = 0};
+                radix2fft_pass(m, k, w, w_m);
+                k = k + 2 * m;
+            }
+
+            m = m * 2;
+            s = s + 1;
+        }
+    }
+    return;
+}
+
+unit fft(int _domainSize, struct pvt_complex[pub 8] & field) {
+    int domainSize = lowestPowerOfTwo(_domainSize);
+    struct complex omega = {.re = 0, .im = 0};
+    rootOfUnity(domainSize, omega);
+    radix2fft(domainSize, field, omega);
+    return;
+}
+
+struct pvt_complex[pub 8] field = {{.pvt_re = 0, .pvt_im = 0}, {.pvt_re = 0, .pvt_im = 0}};
+
+unit main() {
+    int size = 8;
+    /* struct pvt_complex[pub] field = {size : {.pvt_re = 0, .pvt_im = 0} };
+    field[0].pvt_re = 1;
+    field[1].pvt_re = 2;
+    field[2].pvt_re = 3;
+    field[3].pvt_re = 4; */
+
+    fft(size, field);
+    /*
+    int i = 0;
+    while (i < size) {
+        pvt float re = field[i].pvt_re;
+        pvt float im = field[i].pvt_im;
+        i = i + 1;
+    }
+    */
+    assert field[0].pvt_re == 4;
+    assert field[0].pvt_im == 20;
+    return;
+}

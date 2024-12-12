@@ -1,0 +1,5 @@
+#define size 6
+plocal1 plc float[size] car_coords() {
+    plc float[size] coords = {-77.028063, 38.889485,-77.028063, 38.889484,-77.028065, 38.889484};
+    return coords;
+}

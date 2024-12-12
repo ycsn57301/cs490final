@@ -1,0 +1,23 @@
+unit pvt_assert() {
+    pvt int x = 0;
+    assert x < 10;
+    return;
+}
+
+unit fail_assert() {
+    pub int x = 42;
+    assert x < 10;
+    return;
+}
+
+unit succ_assert() {
+    pub int x = 0;
+    assert x < 10;
+    return;
+}
+
+unit main() {
+    succ_assert();
+    pvt_assert();
+    return;
+}

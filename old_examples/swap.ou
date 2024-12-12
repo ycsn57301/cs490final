@@ -1,0 +1,29 @@
+unit pvt_swap(pvt int & x, pvt int & y) {
+    pvt int t = x;
+    x = y;
+    y = t;
+    return;
+}
+
+unit pub_swap(int & x, int & y) {
+    int t = x;
+    x = y;
+    y = t;
+    return;
+}
+
+extern pvt int a;
+extern pvt int b;
+
+unit main() {
+    /* private swap */
+    pvt_swap(a, b);
+
+    /* public swap */
+    int x = 42;
+    int y = 100;
+    pub_swap(x, y);
+    pvt int watch_x = x;
+    pvt int watch_y = y;
+    return;
+}

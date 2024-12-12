@@ -1,0 +1,224 @@
+=============
+M = 10  N = 100  noi = 200
+cut = 5
+annotation = level 0 (update_all atomic)
+nov = 1218
+effective ratio = 4.99914804156174
+optimal cost =  5602226336.0
+
+==============
+M = 10 N = 100  noi = 200
+cut = 6
+annotation = level 0 (update_all atomic)
+nov =  1421
+effective ratio =   5.882141675340856 4
+optimal cost = 761252000.0
+
+==============
+M = 10 N = 100  noi = 200
+cut = 7
+annotation = level 0 (update_all atomic)
+nov =  1624
+effective ratio =  6.895903772374958
+optimal cost =  4061303600.0
+
+==============
+M = 10 N = 100  noi = 200
+cut = 8
+annotation = level 0 (update_all atomic)
+nov =  1827
+effective ratio =   7.998461765228836
+optimal cost =  3501468112.0
+
+==============
+M = 10 N = 100  noi = 200
+cut = 9
+annotation = level 0 (update_all atomic)
+nov =  2064
+effective ratio =  9.9958186191172
+optimal cost =  2801807424.0
+
+==============
+M = 10 N = 100  noi = 200
+cut = 20
+annotation = level 0 (update_all atomic)
+nov =  4297
+effective ratio = 19.949428693748605
+optimal cost =  2801807424.0
+
+==============
+M = 10 N = 100  noi = 200
+cut = 40
+annotation = level 0 (update_all atomic)
+nov =  8323
+effective ratio = 39.81826850923791
+optimal cost = 703354512.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 5
+annotation = level 1 (update_all non atomic)
+nov = 3081
+effective ratio = 4.990856949624977
+optimal cost = 112232128.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 6
+annotation = level 1 (update_all non atomic)
+nov = 3525
+effective ratio =  5.956511994619328
+optimal cost = 94037332.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 7
+annotation = level 1 (update_all non atomic)
+nov = 3998
+effective ratio = 6.891115321993215
+optimal cost = 81283576.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 8
+annotation = level 1 (update_all non atomic)
+nov = 4442
+effective ratio = 7.980729115314932
+optimal cost = 70185880.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 9
+annotation = level 1 (update_all non atomic)
+nov = 4886
+effective ratio =  8.879737177234853
+optimal cost = 63080076.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 10
+annotation = level 1 (update_all non atomic)
+nov = 5330
+effective ratio =  9.957111083301099
+optimal cost = 56254720.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 11
+annotation = level 1 (update_all non atomic)
+nov =  5745
+effective ratio =  10.77633085550063
+optimal cost = 51978220.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 12
+annotation = level 1 (update_all non atomic)
+nov =  6633
+effective ratio =  12.851987536932562
+optimal cost = 43583492.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 13
+annotation = level 1 (update_all non atomic)
+nov =  6633
+effective ratio =  13.73539716320335
+optimal cost = 40780364.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 15
+annotation = level 1 (update_all non atomic)
+nov = 7550
+effective ratio =  14.745539308117987
+optimal cost = 37986708.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 5
+annotation = level 0 (update_all  atomic)
+nov = 383
+effective ratio = 4.998072064030774
+optimal cost =  112070112.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 6
+annotation = level 0 (update_all  atomic)
+nov = 476
+effective ratio = 4.998430298634471
+optimal cost =  112062080.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 7
+annotation = level 0 (update_all  atomic)
+nov = 511
+effective ratio = 6.663260846213828
+optimal cost = 84063119
+
+=============
+M = 10  N = 20  noi = 20
+cut = 8
+annotation = level 0 (update_all  atomic)
+nov = 476
+effective ratio = 6.663260844946036
+optimal cost = 84063120.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 9
+annotation = level 0 (update_all  atomic)
+nov = 668
+effective ratio =  6.663260844946036
+optimal cost = 84063120.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 10
+annotation = level 0 (update_all  atomic)
+nov = 732
+effective ratio =   9.979039357572585
+optimal cost = 56131104.0
+
+=============
+M = 10  N = 20  noi = 20
+cut = 11
+annotation = level 0 (update_all  atomic)
+nov = 796
+effective ratio =  9.987078682136264
+optimal cost = 56085920
+
+=============
+M = 10  N = 20  noi = 20
+cut = 12
+annotation = level 0 (update_all  atomic)
+nov = 860
+effective ratio = 9.987021705230195
+optimal cost = 56086239
+
+=============
+M = 10  N = 20  noi = 20
+cut = 13
+annotation = level 0 (update_all  atomic)
+nov = 924
+effective ratio =  9.98711856867785
+optimal cost = 56085696
+
+=============
+M = 10  N = 20  noi = 20
+cut = 14
+annotation = level 0 (update_all  atomic)
+nov = 988
+effective ratio = 9.98702170673133
+optimal cost =  56086239
+
+=============
+M = 10  N = 20  noi = 20
+cut = 15
+annotation = level 0 (update_all  atomic)
+nov = 1052
+effective ratio =  9.987078682136266
+optimal cost =  56085920.0
+

@@ -1,0 +1,8 @@
+pvt int f(pvt int x) {
+    return x + x;
+}
+
+unit main() {
+    pvt int watch = f(2);
+    return;
+}

@@ -1,0 +1,137 @@
+#define N 1000
+#define P 1000
+#define STEPS 40
+
+extern plocal1 plc int get_Xij(int, int)
+
+atomic pvt int[P] init_r() {
+    pvt int[P] r = {0};
+    for int i = 0; i < P; i = i + 1; {
+        r[i] = i;
+    }
+    return r;
+}
+
+atomic pvt int[P][N] init_X() {
+    pvt int[P][N] X = {{0}};
+    for int i = 0; i < N; i = i + 1; {
+        X[i] = {0};
+        for int j = 0; j < P; j = j + 1; {
+            plc int plc_Xij = get_Xij(i,j);
+            X[i][j] = commit(plc_Xij);
+        }
+    }
+    return X;
+}
+
+plocal1 plc int[N] plc_mulNP(plc int[P][N] &X, plc int[P] &r) {
+    plc int[N] u = {0};
+    for int i = 0; i < N; i = i + 1; {
+        plc int t = 0;
+        for int j = 0; j < P; j = j + 1; {
+            t = t + X[i][j] * r[j];
+        }
+        u[i] = t;
+    }
+    return u;
+}
+
+atomic pvt int[N] untrust_mulNP(pvt int[P][N] &X, pvt int[P] &r) {
+    plc int[P][N] plc_X = {{0}};
+    for int i = 0; i < N; i = i + 1; {
+        plc_X[i] = {0};
+        for int j = 0; j < P; j = j + 1; {
+            plc_X[i][j] = X[i][j]; // convert from pvt to plc
+        }
+    }
+    plc int[P] plc_r = {0};
+    for int i = 0; i < P; i = i + 1; {
+        plc_r[i] = r[i]; // convert from pvt to plc
+    }
+    plc int[N] plc_u = plc_mulNP(plc_X, plc_r);
+    pvt int[N] u = {0};
+    for int i = 0; i < N; i = i + 1; {
+        u[i] = commit(plc_u[i]);
+    }
+    return u;
+}
+
+atomic pub2 bool[N] randN() {
+    pub2 bool[N] b = {false};
+    for int i = 0; i < N; i = i + 1; {
+        pub2 int x = verifier_rand(0, 1);
+        b[i] = (x == 0);
+    }
+    return b;
+}
+
+blackbox2 pvt2 int[P] selectN(pub2 bool[N] &b, pvt int[P][N] &X) {
+    pvt2 int[P] v = {0};
+    for int i = 0; i < P; i = i + 1; {
+        pvt2 int sum = 0;
+        for int j = 0; j < N; j = j + 1; {
+            if (b[j]) {
+                sum = sum + X[j][i];
+            }
+        }
+        v[i] = sum;
+    }
+    return v;
+}
+
+blackbox2 pvt2 int sumN(pub2 bool[N] &b, pvt int[N] &u) {
+    pvt2 int sum = 0;
+    for int i = 0; i < N; i = i + 1; {
+        if (b[i]) {
+            sum = sum + u[i];
+        }
+    }
+    return sum;
+}
+
+atomic unit challengeNP(pvt int[P][N] &X, pvt int[P] &r, pvt int[N] &u) {
+    // challenge
+    pub2 bool[N] b = randN();
+    pvt2 int x1 = sumN(b, u);
+
+    pvt2 int[P] v = selectN(b, X);
+    pvt2 int x2 = 0;
+    for int i = 0; i < P; i = i + 1; {
+        x2 = x2 + v[i] * r[i];
+    }
+    // compare
+    pvt2 int delta = x1 - x2;
+    assert (delta == 0);
+    return;
+}
+
+atomic unit mulNP(pvt int[P][N] &X, pvt int[P] &r) {
+    // multiple at prover side
+    pvt int[N] u = untrust_mulNP(X, r);
+    // challenge
+    for int step = 0; step < STEPS; step = step + 1; {
+        challengeNP(X, r, u);
+    }
+    return;
+}
+
+// multiple without using challenge, it is used as the "control group"
+atomic unit naive_mulNP(pvt int[P][N] &X, pvt int[P] &r) {
+    pvt int[N] u = {0};
+    for int i = 0; i < N; i = i + 1; {
+        pvt int t = 0;
+        for int j = 0; j < P; j = j + 1; {
+            t = t + X[i][j] * r[j];
+        }
+        u[i] = t;
+    }
+    return;
+}
+
+unit main() {
+    pvt int[P] r = init_r();
+    pvt int[P][N] X = init_X();
+    mulNP(X, r);
+    // naive_mulNP(X, r);
+    return;
+}

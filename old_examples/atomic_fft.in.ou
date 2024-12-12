@@ -1,0 +1,16 @@
+unit init_index(int idx, pvt float re, pvt float im) {
+    field[idx] = {.pvt_re = re, .pvt_im = im};
+    return;
+}
+
+unit init() {
+    init_index(0, 0, 1);
+    init_index(1, 0, 2);
+    init_index(2, 0, 3);
+    init_index(3, 0, 4);
+    field[4] = {.pvt_re = 1, .pvt_im = 1};
+    field[5] = {.pvt_re = 1, .pvt_im = 2};
+    field[6] = {.pvt_re = 1, .pvt_im = 3};
+    field[7] = {.pvt_re = 1, .pvt_im = 4};
+    return;
+}

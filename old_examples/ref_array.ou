@@ -1,0 +1,17 @@
+pvt int* [pub 5] g = {null};
+extern pvt int gx;
+extern pvt int gy;
+
+unit test_ref_array() {
+    g[0] = &gx;
+    g[1] = &gy;
+
+    return;
+}
+
+unit main() {
+    test_ref_array();
+    *g[0] = 43;
+    *g[1] = 44;
+    return;
+}

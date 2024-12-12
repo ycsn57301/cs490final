@@ -1,0 +1,1 @@
+This folder contains some old examples we wrote during development. The language's syntax has been changing, so most of these examples will not work with the latest compiler. We keep them here merely for reference.

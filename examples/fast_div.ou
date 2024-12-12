@@ -1,0 +1,28 @@
+struct plc_div_result {
+    plc int quotient;
+    plc int remainder;
+}
+
+struct plc_div_result plc_div(plc int a, plc int b) {
+    return { .quotient = a / b, .remainder = a % b};
+}
+
+pvt int fast_div(pvt int a, pvt int b) {
+    assert(a >= 0);
+    assert(b > 0);
+    struct plc_div_result res = plc_div(a, b);
+    pvt int q = send(res.quotient);
+    pvt int r = send(res.remainder);
+    assert (a == b * q + r);
+    return q;
+}
+
+unit main() {
+    pvt int a = 10;
+    pvt int b = 4;
+
+    pvt int c = fast_div(a, b);
+    assert(c == 2);
+
+    return;
+}

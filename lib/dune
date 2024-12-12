@@ -1,0 +1,15 @@
+(ocamllex
+ (modules lexer))
+
+(menhir
+ (modules parser)
+ (flags -v))
+
+(library
+ (name ou)
+ (libraries unix fmt logs logs.fmt))
+
+(env
+ (dev
+  (flags
+   (:standard -warn-error -A))))

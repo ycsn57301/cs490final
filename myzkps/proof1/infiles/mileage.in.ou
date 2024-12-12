@@ -1,0 +1,7 @@
+#define size 10
+
+plocal1 plc float[size] get_mileages() {
+    plc float[size] mileages = {5.2, 2.1, 239.5, 234.1, 23.4, 
+                                13.2, 49.4, 2.9, 5.8, 5.2};
+    return mileages;
+}

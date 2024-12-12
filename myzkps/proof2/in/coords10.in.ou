@@ -1,0 +1,6 @@
+#define size 10
+// total: 15.42
+plocal1 plc float[size] get_coords() {
+    plc float[size] coords = {38.917065, -77.073926, 38.885414, -77.022262, 38.874116, -77.020858, 38.928848, -77.062892, 38.926696, -77.047227};
+    return coords;
+}

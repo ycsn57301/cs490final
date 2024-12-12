@@ -1,0 +1,8 @@
+plocal1 plc float get_Xij(int i, int j) {
+    if ((i + j) % 2 == 0) {
+        return 1;
+    }
+    else {
+        return -1;
+    }
+}

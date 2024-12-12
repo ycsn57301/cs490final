@@ -1,0 +1,25 @@
+{
+    "name": "ou",
+    "displayName": "ou",
+    "description": "ou",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.29.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "ou",
+            "aliases": ["ou-lang", "ou"],
+            "extensions": [".ou"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "ou",
+            "scopeName": "source.ou",
+            "path": "./syntaxes/ou.tmLanguage.json"
+        }]
+    }
+}

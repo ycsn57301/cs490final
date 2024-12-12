@@ -1,0 +1,157 @@
+#define size 100
+#define size2 10000
+#define samples 2
+
+/* samples << size */
+
+extern plocal1 plc int[size2] init_plc_m1()
+extern plocal1 plc int[size2] init_plc_m2()
+
+plc int[size2] pvt_mat_to_plc(pvt int[size2] &pvt_m) {
+    plc int [size2] plc_m = {0};
+    for int i = 0; i < size; i = i + 1; {
+        for int j = 0; j < size; j = j + 1; {
+            plc_m[i*size + j] = pvt_m[i*size + j]; /* cast pvt -> plc */
+        }
+    }
+    return plc_m;
+}
+
+pvt int[size2] plc_mat_to_pvt(plc int[size2] &plc_m) {
+    pvt int [size2] pvt_m = {0};
+    for int i = 0; i < size; i = i + 1; {
+        for int j = 0; j < size; j = j + 1; {
+            pvt_m[i*size + j] = commit(plc_m[i*size + j]); /* cast plc -> pvt */
+        }
+    }
+    return pvt_m;
+}
+
+atomic pvt int[size2] prover_mat_mul(pvt int[size2] &pvt_m1, pvt int[size2] &pvt_m2) {
+    plc int [size2] plc_m1 = pvt_mat_to_plc(pvt_m1);
+    plc int [size2] plc_m2 = pvt_mat_to_plc(pvt_m2);
+    plc int [size2] plc_m = {0};
+    for int i = 0; i < size; i = i + 1; {
+        for int j = 0; j < size; j = j + 1; {
+            plc int z = 0;
+            for int k = 0; k < size; k = k + 1; {
+                z = z + plc_m1[i*size + k] * plc_m2[k*size + j];
+            }
+            plc_m[i*size + j] = z;
+        }
+    }
+    pvt int [size2] pvt_m = plc_mat_to_pvt(plc_m);
+    return pvt_m;
+}
+
+pvt2 int inner_prod(pvt int[size] &v1, pvt2 int[size] &v2) {
+    pvt2 int res = 0;
+    for int i = 0; i < size; i = i + 1; {
+        res = res + v1[i] * v2[i];
+    }
+    return res;
+}
+
+pvt int[size] get_vec_from_mat(pvt int[size2] &m, pub int row) {
+    pvt int[size] row_vec = {0};
+    for int i = 0; i < size; i = i + 1; {
+        row_vec[i] = m[row*size+ i];
+    }
+    return row_vec;
+}
+
+atomic pvt2 int[size] mat_mul_vec(pvt int[size2] &m, pvt2 int[size] &v) {
+    pvt2 int[size] res = {0};
+    for int i = 0; i < size; i = i + 1; {
+        pvt int[size] row_vec = get_vec_from_mat(m, i);
+        res[i] = inner_prod(row_vec, v);
+    }
+    return res;
+}
+
+atomic pvt2 int[size] rand_vector() {
+    pvt2 int [size] v = {0};
+    for int i = 0; i < size; i = i + 1; {
+        v[i] = verifier_rand(0, 99);
+    }
+    return v;
+}
+
+atomic unit check_vector_eq(pvt2 int[size] &v1, pvt2 int[size] &v2) {
+    for int i = 0; i < size; i = i + 1; {
+        assert (v1[i] == v2[i]);
+    }
+    return;
+}
+
+atomic unit init_from_plc_mat(plc int[size2] &plc_m, pvt int[size2] &pvt_m) {
+    for int i = 0; i < size; i = i + 1; {
+        for int j = 0; j < size; j = j + 1; {
+            pvt_m[i*size + j] = commit(plc_m[i*size + j]);
+        }
+    }
+    return;
+}
+
+atomic pvt int[size2] init_m1() {
+    plc int[size2] plc_m = init_plc_m1();
+    pvt int[size2] m = { 0 };
+    init_from_plc_mat(plc_m, m);
+    return m;
+}
+
+atomic pvt int[size2] init_m2() {
+    plc int[size2] plc_m = init_plc_m2();
+    pvt int[size2] m = { 0 };
+    init_from_plc_mat(plc_m, m);
+    return m;
+}
+
+/*
+atomic pvt int[size][size] init_m1() {
+    pvt int[size][size] m = {{0}};
+    int i = 0;
+    while (i < size) {
+        int j = 0;
+        while (j < size) {
+            m[i][j] = i + j;
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    return m;
+}
+
+atomic pvt int[size][size] init_m2() {
+    pvt int[size][size] m = {{0}};
+    int i = 0;
+    while (i < size) {
+        int j = 0;
+        while (j < size) {
+            m[i][j] = i - j;
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    return m;
+}
+*/
+unit main() {
+    pvt int[size2] m1 = init_m1();
+    pvt int[size2] m2 = init_m2();
+    pvt int[size2] m = prover_mat_mul(m1, m2);
+
+    int times = 0;
+    while (times < samples) {
+        pvt2 int [size] s = rand_vector();
+
+        pvt2 int[size] w = mat_mul_vec(m2, s);
+        pvt2 int[size] z = mat_mul_vec(m1, w);
+        pvt2 int[size] q = mat_mul_vec(m, s);
+
+        check_vector_eq(z, q);
+
+        times = times + 1;
+    }
+    return;
+}

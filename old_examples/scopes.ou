@@ -1,0 +1,21 @@
+int g = 1;
+int *q = &g;
+
+unit foo() {
+    int x = g;
+    int g = 42;
+    int res = bar(&g);
+    return;
+}
+
+atomic int bar(int * p) {
+    return *p + g + *q + 1;
+}
+
+unit main() {
+    foo();
+    int h = 2;
+    q = &h;
+    pvt int res = bar(&g);
+    return;
+}

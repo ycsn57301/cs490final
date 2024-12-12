@@ -1,0 +1,74 @@
+// Stochastic Gradient Descent Algorithm
+// reference: section 5.6.2 of https://web.stanford.edu/~jurafsky/slp3/5.pdf#page=16
+
+#define N 100
+#define M 10
+#define STEPS 200
+#define rate 0.1
+
+extern plocal1 plc float get_x(int, int)
+extern plocal1 plc float get_y(int)
+
+atomic pvt float[N][M] init_x() {
+    pvt float[N][M] x = { {0.0} };
+    for int i = 0; i < M; i = i + 1; {
+        x[i] = {0.0};
+        for int j = 0; j < N; j = j + 1; {
+            plc float plc_xij = get_x(i, j);
+            x[i][j] = commit(plc_xij);
+        }
+    }
+    return x;
+}
+
+atomic pvt float[M] init_y() {
+    pvt float[M] y = {0.0};
+    for int i = 0; i < M; i = i + 1; {
+        plc float plc_yi = get_y(i);
+        y[i] = commit(plc_yi);
+    }
+    return y;
+}
+
+atomic pvt float[N] init_theta() {
+    pvt float[N] theta = {0.0};
+    for int i = 0; i < N; i = i + 1; {
+        theta[i] = 0.0;
+    }
+    return theta;
+}
+
+atomic pvt float f(pvt float[N] &xi, pvt float[N] &theta) {
+    pvt float res = 0.0;
+    for int j = 0; j < N; j = j + 1; {
+        res = res + theta[j] * xi[j];
+    }
+    return 1.0 / (1.0 + k1pvt_exp(-res));
+}
+
+atomic unit update(pvt float[N] &xi, pvt float yi, pvt float[N] &theta) {
+    pvt float zi = f(xi, theta);
+    pvt float loss = zi - yi;
+    for int j = 0; j < N; j = j + 1; {
+        pvt float gj = loss * xi[j];
+        theta[j] = theta[j] - rate * gj;
+    }
+    return;
+}
+
+atomic unit update_all(pvt float[N][M] &x, pvt float[M] &y, pvt float[N] &theta) {
+    for int i = 0; i < M; i = i + 1; {
+        update(x[i], y[i], theta);
+    }
+    return;
+}
+
+unit main() {
+    pvt float[N][M] x = init_x(); // NOTE: M is the first dimension, N is the second. I should have put element type after array size
+    pvt float[M] y = init_y();
+    pvt float[N] theta = init_theta();
+    for int s = 0; s < STEPS; s = s + 1; {
+        update_all(x, y, theta);
+    }
+    return;
+}

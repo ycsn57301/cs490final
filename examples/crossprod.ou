@@ -1,0 +1,16 @@
+#define N 4
+
+unit main() {
+    pvt1 int[N] pvtin_a = {0};
+    pvt1 int[N] pvtin_b = {0};
+    pub1 int pubin_exp = 0;
+
+    pvt1 int sum = 0;
+    sum = sum + pvtin_a[0] * pvtin_b[0];
+    sum = sum + pvtin_a[1] * pvtin_b[1];
+    sum = sum + pvtin_a[2] * pvtin_b[2];
+    sum = sum + pvtin_a[3] * pvtin_b[3];
+    assert (sum == pubin_exp);
+
+    return;
+}

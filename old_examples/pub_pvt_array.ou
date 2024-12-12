@@ -1,0 +1,14 @@
+unit test_pub_pvt() {
+    int[pvt 10] a = {0};
+    int[pvt 10]* p_a = &a;
+
+    pvt int idx = 0;
+    pvt int r = (*p_a)[idx];
+
+    return;
+}
+
+unit main() {
+    test_pub_pvt();
+    return;
+}

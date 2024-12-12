@@ -1,0 +1,51 @@
+#define size 4
+#define size2 16
+
+extern plocal1 plc int[size] recv_coloring()
+
+atomic pub1 bool[size2] init_graph() {
+    pub1 bool[size2] graph = {
+        false, true, true, true,
+        true, false, true, false,
+        true, true, false, true,
+        true, false, true, false};
+    return graph;
+}
+
+atomic pvt1 int[size] init_coloring() {
+    plc int[size] plc_coloring = recv_coloring();
+    pvt int[size] pvt_coloring = {0};
+    for int i = 0; i < size; i = i + 1; {
+        pvt_coloring[i] = commit(plc_coloring[i]);
+    }
+    return pvt_coloring;
+}
+
+atomic pvt bool is_valid_coloring_inner(pub1 bool[size2] &graph, pvt1 int[size] &coloring, int i) {
+    pvt bool b = true;
+    for pub int j = 0; j < size; j = j + 1; {
+        b = b && ((coloring[i] != coloring[j]) || !graph[i*size+j]);
+    }
+    return b;
+}
+
+pvt bool is_valid_coloring(pub1 bool[size2] &graph, pvt1 int[size] &coloring) {
+    pvt bool b = true;
+    for pub int i = 0; i < size; i = i + 1; {
+        // b = b && (coloring[i] == 0 || coloring[i] == 1 || coloring[i] == 2);
+
+        pvt bool inner_b = is_valid_coloring_inner(graph, coloring, i);
+        b = b && inner_b;
+    }
+    return b;
+}
+
+unit main() {
+    pub1 bool[size2] graph = init_graph();
+    pvt1 int[size] coloring = init_coloring();
+
+    pub1 bool corr_col = reveal(is_valid_coloring(graph, coloring));
+    assert(corr_col == true);
+
+    return;
+}

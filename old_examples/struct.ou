@@ -1,0 +1,61 @@
+struct complex {
+    pub int real;
+    pub int imag;
+}
+
+unit complex_add(struct complex* x, struct complex* y, struct complex* result) {
+    int real = x->real + y->real;
+    int imag = x->imag + y->imag;
+    result->real = real;
+    result->imag = imag;
+    return;
+}
+
+unit test_simple() {
+    struct complex x = {.real = 1, .imag = 2};
+    struct complex y = {.real = 3, .imag = 4};
+    struct complex z = {.real = 0, .imag = 0};
+    complex_add(&x, &y, &z);
+    pvt int real = z.real;
+    pvt int imag = z.imag;
+    return;
+}
+
+struct node {
+    pvt int data;
+    struct node* next;
+}
+
+unit test_recursive() {
+    struct node leaf = {.data = 24, .next = null};
+    struct node root = {.data = 42, .next = &leaf};
+    root.data = 12;
+    pvt int r = root.data;
+    return;
+}
+
+struct comp {
+    struct complex[pub 10] field;
+    struct node* tree;
+}
+
+unit test_struct_with_array() {
+    pvt int watch = 0;
+    struct comp c = {
+        .field = {{.real=0, .imag=0}},
+        .tree = null
+    };
+    c.field[0].real = 42;
+    watch = c.field[0].real;
+    struct node root = {.data = 9, .next = null};
+    c.tree = &root;
+    watch = c.tree->data;
+    return;
+}
+
+unit main() {
+    /* test_simple(); */
+    /* test_recursive(); */
+    test_struct_with_array();
+    return;
+}

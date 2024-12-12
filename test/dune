@@ -1,0 +1,8 @@
+(test
+ (name test)
+ (libraries ou alcotest))
+
+(env
+ (dev
+  (flags
+   (:standard -warn-error -A))))

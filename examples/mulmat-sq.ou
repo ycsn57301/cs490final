@@ -1,0 +1,110 @@
+#define M 1000
+#define N 1000
+#define P 1000
+#define MN 1000000
+#define NP 1000000
+#define MP 1000000
+
+#define samples 1
+
+/*
+C(MxP) = A(MxN) * B(NxP)
+
+u(Nx1) = B(NxP) * s(Px1)
+v(Mx1) = A(MxN) * u(Nx1)
+w(Mx1) = C(MxP) * s(Px1)
+check v == w
+*/
+
+// TODO: init in plocal
+/*
+atomic unit init_A(pvt int[MN] &A) {
+    for int i = 0; i < M; i = i + 1; {
+        for int j = 0; j < N; j = j + 1; {
+            A[i*N+j] = i+j;
+        }
+    }
+    return;
+}
+*/
+
+plocal1 plc int[MN] init_plc_A() {
+    plc int[MN] A = {0};
+    for int i = 0; i < M; i = i + 1; {
+        for int j = 0; j < N; j = j + 1; {
+            A[i*N+j] = i+j;
+        }
+    }
+    return A;
+}
+
+blackbox1 pvt int[MN] init_A() {
+    plc int[MN] plc_A = init_plc_A();
+    pvt int[MN] A = {0};
+    for int i = 0; i < MN; i = i + 1; {
+        A[i] = commit(plc_A[i]);
+    }
+    return A;
+}
+
+/*
+atomic unit init_C(pvt int[MP] &C, pvt int[MN] &A, pvt int[NP] &B) {
+    for int i = 0; i < M; i = i + 1; {
+        for int j = 0; j < P; j = j + 1; {
+            plc int z = 0;
+            for int k = 0; k < N; k = k + 1; {
+                z = z + k1plc_int_of_pvt(A[i*N+k]) * k1plc_int_of_pvt(B[k*P+j]);
+            }
+            C[i*P+j] = commit(z);
+        }
+    }
+    return;
+}
+*/
+
+atomic unit rand_vector(pub2 int[P] &v) {
+    for int i = 0; i < P; i = i + 1; {
+        v[i] = verifier_rand(0, 1);
+    }
+    return;
+}
+
+// v[Mx1] = A[MxN] * u[Nx1]
+blackbox2 unit mul_A(pvt2 int[M] &v, pvt int[MN] &A, pvt2 int[N] &u) {
+    for int i = 0; i < M; i = i + 1; {
+        pvt2 int z = 0;
+        for int j = 0; j < N; j = j + 1; {
+            z = z + A[i*N+j] * u[j];
+        }
+        v[i] = z;
+    }
+    return;
+}
+
+atomic unit check_vector_eq(pvt2 int[M] &v, pvt2 int[M] &w) {
+    for int i = 0; i < M; i = i + 1; {
+        assert (v[i] == w[i]);
+    }
+    return;
+}
+
+unit main() {
+    pvt int[MN] A = init_A();
+    pvt int[NP] B = init_A();
+    pvt int[MP] C = init_A();
+
+    for int times = 0; times < samples; times = times + 1; {
+        debug0(times);
+        pub2 int[P] s = {0};
+        rand_vector(s);
+
+        pvt2 int[N] u = {0};
+        pvt2 int[M] v = {0};
+        pvt2 int[M] w = {0};
+        mul_A(u, B, s);
+        mul_A(v, A, u);
+        mul_A(w, C, s);
+        check_vector_eq(v, w);
+    }
+    return;
+}

@@ -1,0 +1,124 @@
+#define N 4
+#define P 10
+#define STEPS 10
+
+extern plocal1 plc float get_Xij(int, int)
+
+atomic pvt float[P] init_r() {
+    pvt float[P] r = {0.0};
+    pub float mean = 1.0 / P;
+    for int i = 0; i < P; i = i + 1; {
+        r[i] = mean;
+    }
+    return r;
+}
+
+atomic pvt float[P][N] init_X() {
+    pvt float[P][N] X = {{0.0}};
+    for int i = 0; i < N; i = i + 1; {
+        X[i] = {0.0};
+        for int j = 0; j < P; j = j + 1; {
+            plc float plc_Xij = get_Xij(i,j);
+            X[i][j] = commit(plc_Xij);
+        }
+    }
+    return X;
+}
+
+plocal1 plc float[N] plc_mulNP(plc float[P][N] &X, plc float[P] &r) {
+    plc float[N] u = {0.0};
+    for int i = 0; i < N; i = i + 1; {
+        plc float t = 0.0;
+        for int j = 0; j < P; j = j + 1; {
+            t = t + X[i][j] * r[j];
+        }
+        u[i] = t;
+    }
+    return u;
+}
+
+atomic pvt float[N] untrust_mulNP(pvt float[P][N] &X, pvt float[P] &r) {
+    plc float[P][N] plc_X = {{0.0}};
+    for int i = 0; i < N; i = i + 1; {
+        plc_X[i] = {0.0};
+        for int j = 0; j < P; j = j + 1; {
+            plc_X[i][j] = X[i][j]; // convert from pvt to plc
+        }
+    }
+    plc float[P] plc_r = {0.0};
+    for int i = 0; i < P; i = i + 1; {
+        plc_r[i] = r[i]; // convert from pvt to plc
+    }
+    plc float[N] plc_u = plc_mulNP(plc_X, plc_r);
+    pvt float[N] u = {0.0};
+    for int i = 0; i < N; i = i + 1; {
+        u[i] = commit(plc_u[i]);
+    }
+    return u;
+}
+
+atomic pub2 bool[N] randN() {
+    pub2 bool[N] b = {false};
+    for int i = 0; i < N; i = i + 1; {
+        pub2 int x = verifier_rand(0, 1);
+        b[i] = (x == 0);
+    }
+    return b;
+}
+
+blackbox2 pvt2 float[P] selectN(pub2 bool[N] &b, pvt float[P][N] &X) {
+    pvt2 float[P] v = {0.0};
+    for int i = 0; i < P; i = i + 1; {
+        pvt2 float sum = 0.0;
+        for int j = 0; j < N; j = j + 1; {
+            if (b[j]) {
+                sum = sum + X[j][i];
+            }
+        }
+        v[i] = sum;
+    }
+    return v;
+}
+
+blackbox2 pvt2 float sumN(pub2 bool[N] &b, pvt float[N] &u) {
+    pvt2 float sum = 0.0;
+    for int i = 0; i < N; i = i + 1; {
+        if (b[i]) {
+            sum = sum + u[i];
+        }
+    }
+    return sum;
+}
+
+atomic unit challengeNP(pvt float[P][N] &X, pvt float[P] &r, pvt float[N] &u) {
+    // challenge
+    pub2 bool[N] b = randN();
+    pvt2 float w1 = sumN(b, u);
+
+    pvt2 float[P] v = selectN(b, X);
+    pvt2 float w2 = 0.0;
+    for int i = 0; i < P; i = i + 1; {
+        w2 = w2 + v[i] * r[i];
+    }
+    // compare
+    pvt2 float delta = w1 - w2;
+    assert (delta < 0.01 && delta > -0.01);
+    return;
+}
+
+unit mulNP(pvt float[P][N] &X, pvt float[P] &r) {
+    // multiple at prover side
+    pvt float[N] u = untrust_mulNP(X, r);
+    // challenge
+    for int step = 0; step < STEPS; step = step + 1; {
+        challengeNP(X, r, u);
+    }
+    return;
+}
+
+unit main() {
+    pvt float[P] r = init_r();
+    pvt float[P][N] X = init_X();
+    mulNP(X, r);
+    return;
+}

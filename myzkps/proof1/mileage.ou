@@ -1,0 +1,29 @@
+#define size 10
+extern plocal1 plc float[size] get_mileages()
+
+atomic pvt1 float[size] init_mileages() {
+    plc float[size] mileages = get_mileages();
+    pvt float[size] pvt_mileages = {0};
+    for int i = 0; i < size; i = i + 1; {
+        pvt_mileages[i] = commit(mileages[i]);
+    }
+    return pvt_mileages;
+}
+
+pvt bool under_miles(pvt1 float[size] mileages) {
+    pvt bool b = true;
+    pvt float total = 0;
+    for pub int i = 0; i < size; i = i + 1; {
+        total = total + mileages[i];
+    }
+    b = 600 > total;
+    return b;
+}
+
+unit main() {
+    pvt1 float[size] mileages = init_mileages();
+
+    pub1 bool col = reveal(under_miles(mileages));
+    assert(col == true);
+    return;
+}

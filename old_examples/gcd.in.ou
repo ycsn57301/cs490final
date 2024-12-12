@@ -1,0 +1,5 @@
+unit init() {
+    input_a = 42;
+    input_b = 24;
+    return;
+}

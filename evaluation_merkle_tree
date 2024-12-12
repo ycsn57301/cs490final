@@ -1,0 +1,70 @@
+cut = 5
+data_length = 256
+annotation = level 0 (all atomic functions execept merkel())
+nov = 6158
+effective ratio = 4.953342782518368
+optimal cost = 15002352
+
+=============
+cut = 10
+data_length = 256
+annotation = level 0 (all atomic functions execept merkel())
+nov = 11268
+effective ratio = 9.757571619452591
+optimal cost = 7615808
+
+=============
+cut = 20
+data_length = 256
+annotation = level 0 (all atomic functions execept merkel())
+nov = 21488
+effective ratio = 19.47978408395057
+optimal cost = 3814816
+
+=============
+cut = 40
+data_length = 256
+annotation = level 0 (all atomic functions execept merkel())
+nov = 41928
+effective ratio = 38.63033877018024
+optimal cost = 1923664
+
+=============
+cut = 5
+data_length = 256
+annotation = level 1 (only sha is atomic)
+nov = 123725
+effective ratio = 4.961618788077553
+optimal cost = 14977328
+(19.17 MB)
+
+=============
+cut = 10
+data_length = 256
+annotation = level 1 (only sha is atomic)
+nov = 225745
+effective ratio =  9.125266715130557
+optimal cost = 8143520
+(37.35 MB)
+
+=============
+cut = 20
+data_length = 256
+annotation = level 1 (only sha is atomic)
+nov = 429785
+effective ratio =  13.55682528006912
+optimal cost = 5481504
+(75.43 MB)
+
+=============
+cut = 40
+data_length = 256
+annotation = level 1 (only sha is atomic)
+nov = 837865
+effective ratio =  17.76889468710666
+optimal cost = 4182128.0
+(151.58 MB)
+
+
+
+

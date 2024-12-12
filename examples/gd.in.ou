@@ -1,0 +1,7 @@
+plocal1 plc float get_x(int i, int j) {
+    return 4;
+}
+
+plocal1 plc float get_y(int i) {
+    return 1;
+}

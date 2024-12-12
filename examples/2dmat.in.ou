@@ -1,0 +1,27 @@
+#define size 100
+#define size2 10000
+
+plocal1 plc int[size2] init_plc_m1() {
+    plc int[size2] m = {0};
+    for int i = 0; i < size; i = i + 1; {
+        for int j = 0; j < size; j = j + 1; {
+            m[i*size + j] = i + j;
+        }
+    }
+    return m;
+}
+
+
+plocal1 plc int[size2] init_plc_m2() {
+    plc int[size2] m = {0};
+    for int i = 0; i < size; i = i + 1; {
+        for int j = 0; j < size; j = j + 1; {
+            m[i* size + j] = i - j;
+        }
+    }
+    return m;
+}
+
+unit init() {
+    return;
+}

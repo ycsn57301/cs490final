@@ -1,0 +1,83 @@
+#define size 100
+// The graph is a cycle of even number of vertexes
+// The coloring is 0, 1, 0, 1, ...
+
+extern plocal1 plc int[size] recv_coloring()
+
+/*
+atomic pub1 bool[size2] init_graph() {
+    pub1 bool[size2] graph = {
+        false, true, true, true,
+        true, false, true, false,
+        true, true, false, true,
+        true, false, true, false};
+    return graph;
+}
+*/
+atomic pvt1 int[size] init_coloring() {
+    plc int[size] plc_coloring = recv_coloring();
+    pvt int[size] pvt_coloring = {0};
+    for int i = 0; i < size; i = i + 1; {
+        pvt_coloring[i] = commit(plc_coloring[i]);
+    }
+    return pvt_coloring;
+}
+
+atomic pub1 bool[size] get_row(int row_id) {
+    pub1 bool[size] row = {false};
+    for int i = 0; i < size; i = i + 1; {
+        if ((i + 1) % size == row_id || (row_id + 1) % size == i) {
+            row[i] = true;
+        }
+        else {
+            row[i] = false;
+        }
+    }
+    /*
+    if (row_id == 0) {
+        pub1 bool[size] row = {false, true, true, true};
+        return row;
+    }
+    else {if (row_id == 1) {
+        pub1 bool[size] row = {true, false, true, false};
+        return row;
+    }
+    else {if (row_id == 2) {
+        pub1 bool[size] row = {true, true, false, true};
+        return row;
+    }
+    else {if (row_id == 3) {
+        pub1 bool[size] row = {true, false, true, false};
+        return row;
+    }}}}
+    pub1 bool[size] row = {false};
+    */
+    return row;
+}
+
+atomic pvt bool is_valid_coloring_inner(pvt1 int[size] &coloring, int i) {
+    pub1 bool[size] row = get_row(i);
+    pvt bool b = true;
+    for pub int j = 0; j < size; j = j + 1; {
+        b = b && ((coloring[i] != coloring[j]) || !row[j]);
+    }
+    return b;
+}
+
+pvt bool is_valid_coloring(pvt1 int[size] &coloring) {
+    pvt bool b = true;
+    for pub int i = 0; i < size; i = i + 1; {
+        pvt bool bi = is_valid_coloring_inner(coloring, i);
+        b = b && bi;
+    }
+    return b;
+}
+
+unit main() {
+    pvt1 int[size] coloring = init_coloring();
+
+    pvt bool corr_col = is_valid_coloring(coloring);
+    assert(corr_col);
+
+    return;
+}

@@ -1,0 +1,20 @@
+atomic pvt int add(pvt int x, pvt int* p) {
+    pvt int z = *p;
+    return x + z + g;
+}
+
+atomic pvt int foo(pvt int x, pub int* y) {
+    return x + *y + g;
+}
+
+pvt int a = 0;
+pvt int b = 1;
+int g = 4;
+
+unit main() {
+    pvt int c = add(a, &b);
+    assert c == a + b + g;
+    int g = 5;
+    pvt int d = foo(c, &g);
+    return;
+}

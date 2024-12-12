@@ -1,0 +1,208 @@
+=============
+cut = 2
+size = 100
+annotation: is_valid_coloring_inner
+nov = 608
+effective ratio = 1.9716875096129955
+optimal cost = 338084
+
+=============
+cut = 3
+size = 100
+annotation: is_valid_coloring_inner
+nov = 1022
+effective ratio = 2.874212561927881
+optimal cost = 231923
+=============
+
+cut = 4
+size = 100
+annotation: is_valid_coloring_inner
+nov = 1228
+effective ratio = 3.7311078647031497
+optimal cost = 178659.0
+
+=============
+cut = 5
+size = 100
+annotation: is_valid_coloring_inner
+nov = 1434
+effective ratio = 4.482975217727563
+optimal cost = 148695
+
+===============
+cut = 6
+size = 100
+annotation: is_valid_coloring_inner
+nov = 1659
+effective ratio = 5.176801329543513
+optimal cost = 128766.0
+
+===============
+cut = 7
+size = 100
+annotation: is_valid_coloring_inner
+nov = 1846
+effective ratio = 5.615757238776421
+optimal cost = 118701
+
+===============
+cut = 8
+size = 100
+annotation: is_valid_coloring_inner
+nov = 2052
+effective ratio = 6.136050664604735
+optimal cost =  108636.0
+
+===============
+cut = 9
+size = 100
+annotation: is_valid_coloring_inner
+nov =
+effective ratio =
+optimal cost =
+
+===============
+cut = 10
+size = 100
+annotation: is_valid_coloring_inner
+nov = 3764
+effective ratio = 5.558718918875124
+optimal cost = 123427
+
+===============
+cut = 20
+size = 100
+annotation: is_valid_coloring_inner
+nov = 4543
+effective ratio = 5.468159632500718
+optimal cost = 121905
+
+===============
+cut = 40
+size = 100
+annotation: is_valid_coloring_inner
+nov = 8644
+effective ratio = 3.73173448880081
+optimal cost = 178629.0
+
+=============
+cut = 2
+size = 100
+annotation: is_valid_coloring_inner not atomic
+nov = 50935
+effective ratio =  1.4042853501359844
+optimal cost = 40608
+
+=============
+cut = 3
+size = 100
+annotation: is_valid_coloring_inner not atomic
+nov = 61241
+effective ratio =  2.34453553930620
+optimal cost = 284319
+
+=============
+cut = 4
+size = 100
+annotation: is_valid_coloring_inner not atomic
+nov = 71547
+effective ratio =   1.9611128926441643
+optimal cost = 339907
+
+=============
+cut = 5
+size = 100
+annotation: is_valid_coloring_inner not atomic
+nov = 81853
+effective ratio =  1.4747862255113442
+optimal cost = 451995
+
+============
+cut = 2
+size = 100
+annotation: streaming input
+nov = 730
+effective ratio =   1.9716045219798737
+optimal cost = 338082
+
+============
+cut = 3
+size = 100
+annotation: streaming input
+nov = 934
+effective ratio =   2.8740745850993648
+optimal cost =  231923.0
+
+============
+cut = 4
+size = 100
+annotation: streaming input
+nov = 1138
+effective ratio =   3.7309287525397545
+optimal cost = 178659.0
+
+============
+cut = 5
+size = 100
+annotation: streaming input
+nov = 1342
+effective ratio =   4.482760012105317
+optimal cost = 148695.0
+
+============
+cut = 6
+size = 100
+annotation: streaming input
+nov = 1546
+effective ratio =  5.176552816737337
+optimal cost =  128766.0
+
+============
+cut = 7
+size = 100
+annotation: streaming input
+nov = 1731
+effective ratio =  5.615487653852958 118701.0
+optimal cost =  118701.0
+
+============
+cut = 8
+size = 100
+annotation: streaming input
+nov = 1935
+effective ratio =  5.960138415730036
+optimal cost =  111837.0
+
+============
+cut = 9
+size = 100
+annotation: streaming input
+nov = 2139
+effective ratio =  6.148830773488307
+optimal cost =  108405.0
+
+
+============
+cut = 10
+size = 100
+annotation: streaming input
+nov = 2362
+effective ratio =  6.161733439331472
+optimal cost = 108178.0
+
+============
+cut = 20
+size = 100
+annotation: streaming input
+nov = 4383
+effective ratio =  5.712361168243521
+optimal cost = 116688.0
+
+============
+cut = 40
+size = 100
+annotation: streaming input
+nov = 8463
+effective ratio =  4.205318444213116
+optimal cost = 158505.0

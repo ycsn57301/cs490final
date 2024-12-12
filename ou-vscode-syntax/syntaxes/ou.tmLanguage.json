@@ -1,0 +1,96 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "ou-lang",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#constants"
+		},
+		{
+			"include": "#comments"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.command",
+					"match": "\\b(if|else|while|for|break|continue|assert|return)\\b"
+				},
+				{
+					"name": "support.type.ou",
+					"match": "\\b(int|bool|float|unit|struct|int8|int16|int32|int64|uint8|uint16|uint32|uint64)\\b"
+				},
+				{
+					"name": "keyword.interface.seclvl",
+					"match": "\\b(pvt|pub|plc|pub0|pub1|pub2|pvt1|pvt2|plc1|plc2)\\b"
+				},
+				{
+					"name": "keyword.channel.decorator",
+					"match": "\\b(atomic|extern|plocal1|plocal2|blackbox1|blackbox2)\\b"
+				},
+				{
+					"name": "keyword.header.macro",
+					"match": "\\b(define)\\b"
+				}
+			]
+		},
+		"constants": {
+			"patterns": [
+				{
+					"comment": "Floating-point literals",
+					"match": "(\\.\\d+([Ee][-+]\\d+)?i?)\\b|\\b\\d+\\.\\d*(([Ee][-+]\\d+)?i?\\b)?",
+					"name": "constant.numeric.floating-point.ou"
+				},
+				{
+					"comment": "Integers",
+					"match": "\\b((0x[0-9a-fA-F]+)|(0[0-7]+i?)|(\\d+([Ee]\\d+)?i?)|(\\d+[Ee][-+]\\d+i?))\\b",
+					"name": "constant.numeric.integer.ou"
+				},
+				{
+					"comment": "Language constants",
+					"match": "\\b(true|false|null|array)\\b",
+					"name": "constant.language.ou"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.ou",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.ou",
+					"match": "\\\\."
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"comment": "empty comment",
+					"name": "comment.block.ou",
+					"match": "/\\*\\*\\/"
+				},
+				{
+					"comment": "block comment",
+					"name": "comment.block.ou",
+					"begin": "/\\*",
+					"end": "\\*/"
+				},
+				{
+					"comment": "single line comment",
+					"name": "comment.single.ou",
+					"begin": "//",
+					"end": "\n"
+				}
+			]
+		}
+	},
+	"scopeName": "source.ou"
+}

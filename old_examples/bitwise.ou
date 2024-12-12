@@ -1,0 +1,12 @@
+unit main() {
+    pvt int watcher = 0;
+    watcher = ~0b01;
+    watcher = 0b0110 & 0b1011;
+    watcher = 0b0011 | 0b1000;
+    watcher = 0b00101 << 2;
+    watcher = 0b01011 >> 1;
+    assert 11 == 0b1011; /* Bin */
+    assert 42 == 0x2a;   /* Hex */
+    assert 42 == 0o52;   /* Oct */
+    return;
+}

@@ -1,0 +1,35 @@
+#define size 4
+
+plocal1 plc int[size] recv_coloring() {
+    plc int[size] coloring = {0,1,2,1};
+    return coloring;
+}
+
+unit init() {
+    // when size is 4:
+    // assertion should succeed
+    // graph = {
+    //     false, true, true, true,
+    //     true, false, true, false,
+    //     true, true, false, true,
+    //     true, false, true, false};
+    // coloring = {0,1,2,1};
+
+    // when size is 4:
+    // assertion should fail
+    // graph = {
+    //     false, true, true, true,
+    //     true, false, true, true,
+    //     true, true, false, true,
+    //     true, true, true, false};
+    // coloring = {0,1,2,1};
+    
+    // when size is 3:
+    // assertion should succeed
+    // graph = {
+    //     false, true, true,
+    //     true, false, true,
+    //     true, true, false};
+    // coloring = {0,1,2};
+    return;
+}

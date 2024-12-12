@@ -1,0 +1,13 @@
+struct node {
+    pvt int secret;
+    pub int shared;
+}
+
+
+unit main() {
+    struct node n = {.secret = 1, .shared = 2};
+    pub int x = n.shared;
+    pvt int y = n.secret;
+    struct node m = n;
+    return;
+}

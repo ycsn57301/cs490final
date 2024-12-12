@@ -1,0 +1,22 @@
+extern pvt int a0;
+extern pvt int a1;
+
+pvt int fib(int n) {
+    assert n >= 0;
+    if (n == 0) {
+        return a0;
+    }
+    else {
+        if (n == 1) {
+            return a1;
+        }
+        else {
+            return fib(n-1) + fib(n-2);
+        }
+    }
+}
+
+unit main() {
+    pvt int watch = fib(4);
+    return;
+}

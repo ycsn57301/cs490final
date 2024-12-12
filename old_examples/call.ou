@@ -1,0 +1,16 @@
+pvt int bar(pvt int x) {
+    return x;
+}
+
+unit foo(pvt int y) {
+    assert y > 0;
+    return;
+}
+
+unit main() {
+    pvt int z = 42;
+    /* foo(z - bar(z+1)); */
+    z = z - bar(z);
+    /* foo(bar(z + 2) - bar(z + 1)); */
+    return;
+}

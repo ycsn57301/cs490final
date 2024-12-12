@@ -1,0 +1,23 @@
+extern pvt int[pvt 200] b;
+
+/* simulate a two dimensional array with 1-dim 10 and 2-dim 20 */
+pvt int b_get_index(pub int i1, pvt int i2) {
+    pvt int i = i1 * 20 + i2;
+    return b[i];
+}
+
+unit b_set_index(pub int i1, pvt int i2, pvt int v) {
+    pvt int i = i1 * 20 + i2;
+    b[i] = v;
+    return;
+}
+
+unit main() {
+    pub int[pub 4] a = {0};
+    a[1] = 42;
+    pvt int i = 3;
+    b_set_index(2, i, 100);
+    b_set_index(2, i, a[1]);
+    pvt int x = b_get_index(1, i);
+    return;
+}

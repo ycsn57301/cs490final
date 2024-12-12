@@ -1,0 +1,140 @@
+// reference: https://people.eecs.berkeley.edu/~sanjamg/classes/cs294-spring16/scribes/7.pdf
+
+#define size 10000
+#define size2 100000000
+
+plocal2 plc2 int[plc2 size] rand_permute() {
+    plc2 int[plc2 size] p = {0};
+    for int i = 0; i < size; i = i + 1; {
+        p[i] = i;
+    }
+    // Fisher-Yates shuffles
+    for int i = 0; i < size - 1; i = i + 1; {
+        plc2 int j = prover_rand(i, size-1);
+        plc2 int t = p[i];
+        p[i] = p[j];
+        p[j] = t;
+    }
+    return p;
+}
+
+blackbox2 unit verify_cycle(pub2 bool[pub2 size2] g, pub2 int[pub2 size] path) {
+    // permute
+    plc2 int[plc2 size] permute = rand_permute();
+    plc2 bool[plc2 size2] plc_g = {false};
+    for int i = 0; i < size; i = i + 1; {
+        for int j = 0; j < size; j = j + 1; {
+            plc_g[i * size + j] = g[i * size + j];
+        }
+    }
+    plc2 bool[plc2 size2] pg = {false};
+    for int i = 0; i < size; i = i + 1; {
+        for int j = 0; j < size; j = j + 1; {
+            plc2 int p_i = permute[i];
+            plc2 int p_j = permute[j];
+            pg[p_i * size + p_j] = plc_g[i * size + j];
+        }
+    }
+    
+    // why not this single loop instead of the two previous ones? why copy things to plc_g?
+    // plc2 bool[plc2 size2] pg = {false};
+    // for int i = 0; i < size; i = i + 1; {
+    //     for int j = 0; j < size; j = j + 1; {
+    //         plc2 int p_i = permute[i];
+    //         plc2 int p_j = permute[j];
+    //         pg[p_i * size + p_j] = g[i * size + j];
+    //     }
+    // }
+    
+    // commit
+    pvt2 bool[pub2 size2] pvt_pg = {false};
+    for int i = 0; i < size; i = i + 1; {
+        for int j = 0; j < size; j = j + 1; {
+            pvt_pg[i*size + j] = commit(pg[i*size + j]);
+        }
+    }
+
+    pvt2 int[size] pvt_permute = {0};
+    for int i = 0; i < size; i = i + 1; {
+        pvt_permute[i] = commit(permute[i]);
+    }
+
+    // challenge
+    
+    pub2 bool b = verifier_rand(0,1) == 1;
+    print(b);
+    if (b) {
+        for int i = 0; i < size-1; i = i + 1; {
+            plc2 int x = path[i];
+            plc2 int y = path[i+1];
+            plc2 int p_x = permute[x];
+            plc2 int p_y = permute[y];
+            pub2 int pub_p_x = reveal(commit(p_x));
+            pub2 int pub_p_y = reveal(commit(p_y));
+            assert (pvt_pg[pub_p_x*size + pub_p_y]);
+        }
+    }
+    else {
+        pub2 bool[pub2 size2] permuted_g = {false};
+        pub2 int[pub2 size] permute = {0};
+        for int i = 0; i < size; i = i + 1; {
+            permute[i] = reveal(pvt_permute[i]);
+        }
+        for int i = 0; i < size; i = i + 1; {
+            for int j = 0; j < size; j = j + 1; {
+                pub2 int p_i = permute[i];
+                pub2 int p_j = permute[j];
+                pub2 bool edge = reveal(pvt_pg[p_i*size + p_j]);
+                assert (edge == g[i*size + j]);
+            }
+        }
+    }
+    
+    return;
+}
+
+blackbox2 pub2 bool[pub2 size2] init_graph() {
+    pub2 bool[pub2 size2] g = {false};
+    for int i = 0; i < size; i = i + 1; {
+        for int j = 0; j < size; j = j + 1; {
+            if (i == j) {
+                g[i * size + j] = true;
+            }
+            else {
+                g[i * size + j] = false;
+            }
+        }
+    }
+    g[0 * size + 1] = true; g[1 * size + 0] = true;
+    g[1 * size + 2] = true; g[2 * size + 1] = true;
+    g[0 * size + 3] = true; g[3 * size + 0] = true;
+    g[0 * size + 4] = true; g[4 * size + 0] = true;
+    g[1 * size + 4] = true; g[4 * size + 1] = true;
+    g[1 * size + 5] = true; g[5 * size + 1] = true;
+    g[2 * size + 5] = true; g[5 * size + 2] = true;
+    g[3 * size + 4] = true; g[4 * size + 3] = true;
+    g[4 * size + 5] = true; g[5 * size + 4] = true;
+    g[3 * size + 5] = true; g[5 * size + 3] = true;
+    return g;
+}
+
+blackbox2 pub2 int[pub2 size] init_path() {
+    pub2 int[pub2 size] path = {0};
+    for int i = 0; i < size; i = i + 1; {
+        path[i] = 0;
+    }
+    path[0] = 0;
+    path[1] = 1;
+    path[2] = 2;
+    path[3] = 5;
+    path[4] = 4;
+    path[5] = 3;
+    return path;
+}
+
+unit main() {
+    pub2 bool[pub2 size2] g = init_graph();
+    pub2 int[pub2 size] path = init_path();
+    verify_cycle(g, path);
+    return;
+}

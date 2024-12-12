@@ -1,0 +1,6 @@
+#define size 10
+// total: 299.79
+plocal1 plc float[size] get_mileages() {
+    plc float[size] mileages = {92, 67, 24.57, 11.07, 4.76, 18.37, 17.5, 22.54, 29.84, 12.14};
+    return mileages;
+}

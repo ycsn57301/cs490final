@@ -1,0 +1,119 @@
+#define size 500
+extern plocal1 plc float[size] get_coords()
+
+// Calculate factorial of number
+atomic pvt float factorial(int n) {
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+// Calculate power of number
+atomic pvt float power(pvt float num, int n) {
+    pvt float res = 1;
+    if (n == 0) {
+        return res;
+    }
+    else {
+        for int i = 0; i < n; i = i + 1; {
+            res = res * num;
+        }
+    }
+    return res;
+}
+
+// Calculated using Taylor Series using 8 terms
+// Requires factorial and power
+atomic pvt float sine_value(pvt1 float coord) {
+    pvt float sine = 0.0;
+    pub int terms = 10;
+    for int i = 0; i < terms; i = i + 1; {
+        pub int coef = 2 * i + 1;
+        pvt float term = power(coord, coef) / factorial(coef);
+        if (i % 2 == 0) {
+            sine = sine + term;
+        }
+        else {
+            sine = sine - term;
+        }
+    }
+    return sine;
+}
+
+atomic pvt float cosine_value(pvt1 float coord) {
+    pvt float cosine = 0.0;
+    pub int terms = 10;
+    for int i = 0; i < terms; i = i + 1; {
+        pub int coef = 2 * i;
+        pvt float term = power(coord, coef) / factorial(coef);
+        if (i % 2 == 0) {
+            cosine = cosine + term;
+        }
+        else {
+            cosine = cosine - term;
+        }
+    }
+    return cosine;
+}
+
+atomic pvt float square_root(pvt1 float val) {
+    pvt float guess = val / 2;
+
+    for pub int i = 0; i < 20; i = i + 1; {
+        guess = (guess + (val / guess)) / 2;
+    }
+
+    return guess;
+}
+
+atomic pvt float haversine(pvt1 float lat1, pvt1 float lon1, pvt1 float lat2, pvt1 float lon2) {
+    pub float pi = 3.1415926535;
+
+    pvt float lat1_rad = lat1 * pi / 180;
+    pvt float lat2_rad = lat2 * pi / 180;
+    pvt float lon1_rad = lon1 * pi / 180;
+    pvt float lon2_rad = lon2 * pi / 180;
+
+    pvt float delta_lat = lat2_rad - lat1_rad;
+    pvt float delta_lon = lon2_rad - lon1_rad;
+    pvt float sine_delta_lat = sine_value(delta_lat / 2);
+    pvt float sine_delta_lon = sine_value(delta_lon / 2);
+
+    pvt float cos_lat1 = cosine_value(lat1_rad);
+    pvt float cos_lat2 = cosine_value(lat2_rad);
+
+    pvt float a = power(sine_delta_lat, 2) + cos_lat1 * cos_lat2 * power(sine_delta_lon, 2);
+
+    pub float radius_earth = 6371;
+
+    pvt float distance = 2 * radius_earth * sine_value(square_root(a));
+
+    return distance;
+}
+
+pvt bool under_miles(pvt1 float[size] coords) {
+    pvt bool b = true;
+    pvt float total = 0.0;
+    for pub int i = 0; i < size - 2; i = i + 2; {
+        total = total + haversine(coords[i], coords[i + 1], coords[i + 2], coords[i + 3]);
+    }
+    b = 1044 > total;
+    return b;
+}
+
+atomic pvt1 float[size] init_coords() {
+    plc float[size] coords = get_coords();
+    pvt float[size] pvt_coords = {0};
+    for int i = 0; i < size; i = i + 1; {
+        pvt_coords[i] = commit(coords[i]);
+    }
+    return pvt_coords;
+}
+
+unit main() {
+    pvt1 float[size] coords = init_coords();
+    pub1 bool col = reveal(under_miles(coords));
+    assert(col == true);
+    return;
+}

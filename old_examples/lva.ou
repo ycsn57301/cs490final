@@ -1,0 +1,30 @@
+unit check_arr(pvt int[pub 4] &a) {
+    int i = 0;
+    while (i < 4) {
+        assert a[i] == 0;
+        i = i + 1;
+    }
+    return;
+}
+
+struct comp {
+    pub int x;
+    pvt int [pvt 2] y;
+    pvt int [pub 2] z;
+}
+
+unit main() {
+    pvt int [pub 4] a = {0};
+    a[0] = 0;
+    check_arr(a);
+
+    struct comp [pub 4] b = {
+        {.x = 42, .y = {0}, .z = {0}}
+    };
+
+    assert b[0].x == 42;
+    assert b[1].y[0] == 0;
+    assert b[1].z[0] == 0;
+    
+    return;
+}
